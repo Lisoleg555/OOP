@@ -6,6 +6,8 @@ template <class F> TTreeItem<F>::TTreeItem()
 	this->figure = nullptr;
 	this->left = nullptr;
 	this->right = nullptr;
+	this->parent = nullptr;
+	this->go = 0;
 	std::cout << "Tree item: created" << std::endl;
 }
 
@@ -14,12 +16,22 @@ template <class F> TTreeItem<F>::TTreeItem(std::shared_ptr<F>& figure)
 	this->figure = figure;
 	this->left = nullptr;
 	this->right = nullptr;
+	this->parent = nullptr;
+	this->go = 0;
 	std::cout << "Tree item: created" << std::endl;
 }
 
 template <class F> bool TTreeItem<F>::CheckLeft()
 {
 	if (this->left == nullptr)
+		return false;
+	else
+		return true;
+}
+
+template <class F> bool TTreeItem<F>::CheckRight()
+{
+	if (this->right == nullptr)
 		return false;
 	else
 		return true;
@@ -40,24 +52,27 @@ template <class F> void TTreeItem<F>::Show()
 	return;
 }
 
-template <class F> std::shared_ptr<TTreeItem<F>> TTreeItem<F>::Set(std::shared_ptr<TTreeItem<F>> seed, std::shared_ptr<F> figure, int k)
+template <class F> std::shared_ptr<TTreeItem<F>> TTreeItem<F>::Set(std::shared_ptr<TTreeItem<F>> papa , std::shared_ptr<TTreeItem<F>> seed, std::shared_ptr<F> figure, int k)
 {
 	if(k == 1)
 	{
 		std::shared_ptr<TTreeItem<F>> newTreeItem = std::make_shared<TTreeItem<F>>(*(new TTreeItem<F>(figure)));
+		newTreeItem->parent = papa;
 		return newTreeItem;
 	}
 	else if(seed->figure->Square() > figure->Square())
 	{
 		if(seed->left == nullptr)
 			k = 1;
-		seed->left = seed->left->Set(seed->left, figure, k);
+		papa = seed;
+		seed->left = seed->left->Set(papa, seed->left, figure, k);
 	}
 	else if(seed->figure->Square() <= figure->Square())
 	{
 		if(seed->right == nullptr)
 			k = 1;
-		seed->right = seed->right->Set(seed->right, figure, k);
+		papa = seed;
+		seed->right = seed->right->Set(papa, seed->right, figure, k);
 	}
 	return seed;
 }
@@ -65,6 +80,27 @@ template <class F> std::shared_ptr<TTreeItem<F>> TTreeItem<F>::Set(std::shared_p
 template <class F> std::shared_ptr<F> TTreeItem<F>::GetFigure() const
 {
 	return this->figure;
+}
+
+template <class F> std::shared_ptr<TTreeItem<F>> TTreeItem<F>::GetRight()
+{
+	return this->right;
+}
+
+template <class F> std::shared_ptr<TTreeItem<F>> TTreeItem<F>::GetParent()
+{
+	return this->parent;
+}
+
+template <class F> void TTreeItem<F>::Increase()
+{
+	++go;
+	return;
+}
+
+template <class F> void TTreeItem<F>::NullPar() {
+	this->parent = nullptr;
+	return;
 }
 
 template <class F> std::shared_ptr<TTreeItem<F>> TTreeItem<F>::GetLeft(std::shared_ptr<TTreeItem<F>> seed)
@@ -113,6 +149,33 @@ template <class F> std::ostream& operator<<(std::ostream& os, TTreeItem<F>& obj)
 {
 	obj.GetPtrFigure()->Print();
 	return os;
+}
+
+template <class F> std::shared_ptr<TTreeItem<F>> TTreeItem<F>::Min(std::shared_ptr<TTreeItem<F>> seed)
+{
+	std::shared_ptr<TTreeItem<F>> min;
+	if(seed->left != nullptr)
+	{
+		min = Min(seed->left);
+	}
+	else
+	{
+		min = seed;
+	}
+	return min;
+}
+template <class F> std::shared_ptr<TTreeItem<F>> TTreeItem<F>::Max(std::shared_ptr<TTreeItem<F>> seed)
+{
+	std::shared_ptr<TTreeItem<F>> max;
+	if(seed->right != nullptr)
+	{
+		max = Max(seed->right);
+	}
+	else
+	{
+		max = seed;
+	}
+	return max;
 }
 
 #include "figure.h"
