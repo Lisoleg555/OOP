@@ -19,7 +19,8 @@ template <class F> void TTree<F>::push(std::shared_ptr<F> figure, int k)
 	seed = seed->Set(nullptr, seed, figure, k);
 }
 
-template <class F> std::shared_ptr<TTreeItem<F>> TTree<F>::GetSeed() {
+template <class F> std::shared_ptr<TTreeItem<F>> TTree<F>::GetSeed() 
+{
 	return this->seed;
 }
 

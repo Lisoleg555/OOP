@@ -98,7 +98,8 @@ template <class F> void TTreeItem<F>::Increase()
 	return;
 }
 
-template <class F> void TTreeItem<F>::NullPar() {
+template <class F> void TTreeItem<F>::NullPar()
+{
 	this->parent = nullptr;
 	return;
 }
